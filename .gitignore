@@ -1,0 +1,71 @@
+# ========================
+# Go build artifacts
+# ========================
+/bin/
+/dist/
+/build/
+/tmp/
+
+# Binary output (sesuaikan nama app kamu)
+kasir-api
+kasir-api.exe
+
+*.exe
+*.dll
+*.so
+*.dylib
+
+# ========================
+# Go test / coverage
+# ========================
+*.test
+*.out
+coverage.out
+
+# ========================
+# Go workspace file
+# ========================
+go.work
+go.work.sum
+
+# ========================
+# Go module cache (optional)
+# ========================
+# Uncomment kalau kamu memang pakai vendor mode
+# /vendor/
+
+# ========================
+# IDE / Editor
+# ========================
+.vscode/
+.idea/
+*.swp
+*.swo
+*.tmp
+
+# ========================
+# OS junk
+# ========================
+.DS_Store
+Thumbs.db
+
+# ========================
+# Logs
+# ========================
+*.log
+
+# ========================
+# Environment variables
+# ========================
+.env
+.env.*
+
+# ========================
+# Swagger generated files
+# ========================
+/docs/
+
+# ========================
+# Temporary debug files
+# ========================
+*.debug

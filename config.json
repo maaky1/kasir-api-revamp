@@ -1,0 +1,21 @@
+{
+  "app": {
+    "name": "kasir-api",
+    "env": "dev"
+  },
+  "web": {
+    "prefork": false,
+    "port": 9090
+  },
+  "log": {
+    "level": 5
+  },
+  "database": {
+    "url": "",
+    "pool": {
+      "idle": 2,
+      "max": 10,
+      "lifetime": 300
+    }
+  }
+}
