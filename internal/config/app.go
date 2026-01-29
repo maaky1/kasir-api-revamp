@@ -1,6 +1,11 @@
 package config
 
 import (
+	"kasir-api/internal/delivery/http"
+	"kasir-api/internal/delivery/http/routes"
+	"kasir-api/internal/repository/postgres"
+	"kasir-api/internal/service"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
@@ -15,12 +20,14 @@ type BootstrapConfig struct {
 }
 
 func Bootstrap(cfg *BootstrapConfig) {
-	cfg.Logger.Info("Settingnya disini semua")
+	categoryRepository := postgres.NewCategoryRepository(cfg.DB, cfg.Logger)
+	categoryService := service.NewCategoryService(categoryRepository, cfg.Logger)
+	categoryController := http.NewCategoryController(categoryService, cfg.Logger)
 
-	// Minimal route biar bisa test server hidup
-	// cfg.App.Get("/health", func(c *fiber.Ctx) error {
-	// 	return c.JSON(fiber.Map{
-	// 		"status": "ok",
-	// 	})
-	// })
+	routeConfig := routes.RouteConfig{
+		App:                cfg.App,
+		CategoryController: categoryController,
+	}
+
+	routeConfig.Setup()
 }

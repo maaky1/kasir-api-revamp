@@ -41,7 +41,7 @@ func NewLogger(v *viper.Viper) *zap.Logger {
 	if v.GetString("app.env") == "dev" {
 		encCfg.EncodeLevel = zapcore.CapitalColorLevelEncoder
 		encCfg.ConsoleSeparator = "  "
-		encCfg.EncodeCaller = shortCallerFixed(20)
+		encCfg.EncodeCaller = shortCallerFixed(30)
 		core := zapcore.NewCore(
 			zapcore.NewConsoleEncoder(encCfg),
 			zapcore.AddSync(os.Stdout),

@@ -13,7 +13,7 @@
   "database": {
     "url": "",
     "pool": {
-      "idle": 2,
+      "idle": 5,
       "max": 10,
       "lifetime": 300
     }

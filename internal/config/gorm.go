@@ -7,6 +7,7 @@ import (
 	"go.uber.org/zap"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 )
 
 func NewDatabase(v *viper.Viper, log *zap.Logger) *gorm.DB {
@@ -15,7 +16,11 @@ func NewDatabase(v *viper.Viper, log *zap.Logger) *gorm.DB {
 	maxConnection := v.GetInt("database.pool.max")
 	maxLifeTimeConnection := v.GetInt("database.pool.lifetime")
 
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		NamingStrategy: schema.NamingStrategy{
+			SingularTable: true,
+		},
+	})
 	if err != nil {
 		log.Fatal("Failed connect to NeonDB:", zap.Error(err))
 	}
