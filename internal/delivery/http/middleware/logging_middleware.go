@@ -19,7 +19,6 @@ const (
 func LoggingMiddleware(baseLogger *zap.Logger) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 
-		// 🚫 skip non-API
 		if !strings.HasPrefix(c.Path(), "/api") {
 			return c.Next()
 		}
@@ -27,25 +26,42 @@ func LoggingMiddleware(baseLogger *zap.Logger) fiber.Handler {
 		start := time.Now()
 		requestID := uuid.NewString()
 
-		// request-scoped logger
 		logger := baseLogger.With(
+			zap.String("layer", "http"),
 			zap.String("request_id", requestID),
 			zap.String("method", c.Method()),
 			zap.String("path", c.Path()),
 		)
 
-		// simpan context + logger
 		ctx := context.WithValue(context.Background(), LoggerKey, logger)
 		c.Locals(string(LoggerKey), ctx)
 
-		logger.Info("http_request_in")
+		logger.Info("request_started")
 
 		err := c.Next()
+		status := c.Response().StatusCode()
+		duration := time.Since(start).Truncate(time.Millisecond)
 
-		logger.Info("http_request_out",
-			zap.Int("status", c.Response().StatusCode()),
-			zap.String("latency", time.Since(start).Truncate(time.Millisecond).String()),
-		)
+		switch {
+		case status >= 500:
+			logger.Error("request_error",
+				zap.Int("status", status),
+				zap.String("duration", duration.String()),
+				zap.Error(err),
+			)
+
+		case status >= 400:
+			logger.Warn("request_completed",
+				zap.Int("status", status),
+				zap.String("duration", duration.String()),
+			)
+
+		default:
+			logger.Info("request_completed",
+				zap.Int("status", status),
+				zap.String("duration", duration.String()),
+			)
+		}
 
 		return err
 	}

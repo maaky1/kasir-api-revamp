@@ -24,12 +24,12 @@ func NewCategoryService(repo repository.CategoryRepository) CategoryService {
 
 func (s *categoryService) GetCategoryByID(ctx context.Context, id uint) (dto.CategoryResponse, error) {
 	log := middleware.LoggerFromCtx(ctx).With(
-		zap.String("layer", "service"),
-		zap.String("operation", "CategoryService.GetCategoryByID"),
-		zap.Uint("category_id", id),
+		zap.String("Layer", "Service"),
+		zap.String("Operation", "CategoryService.GetCategoryByID"),
+		zap.Uint("Category ID", id),
 	)
 
-	log.Debug("Calling repository")
+	log.Info("Calling repository")
 
 	c, err := s.repo.FindByID(ctx, id)
 	if err != nil {

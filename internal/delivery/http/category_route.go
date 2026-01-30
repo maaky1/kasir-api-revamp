@@ -25,21 +25,22 @@ func (h *CategoryController) GetCategoryByID(ctx *fiber.Ctx) error {
 		zap.String("operation", "CategoryController.GetCategoryByID"),
 	)
 
-	log.Info("Request received", zap.String("id", ctx.Params("id")))
+	log.Info("handle_get_category_by_id", zap.String("id_param", ctx.Params("id")))
 
 	id, err := helper.ParseUintParam(ctx, "id")
 	if err != nil {
-		log.Warn("Invalid category id", zap.String("id", ctx.Params("id")), zap.Error(err))
-		return response.Error(ctx, http.StatusBadRequest, "Invalid category id")
+		log.Warn("invalid_category_id", zap.String("id_param", ctx.Params("id")), zap.Error(err))
+		return response.Error(ctx, http.StatusBadRequest, "Invalid category ID")
 	}
 
 	reqCtx := middleware.RequestContext(ctx)
 
 	res, err := h.svc.GetCategoryByID(reqCtx, id)
 	if err != nil {
-		log.Warn("Service error", zap.Error(err))
+		log.Error("get_category_by_id_failed", zap.Uint("category_id", id), zap.Error(err))
 		return helper.WriteServiceError(ctx, err)
 	}
 
+	log.Info("get_category_by_id_succeeded", zap.Uint("category_id", id))
 	return response.Success(ctx, http.StatusOK, "Category found", res)
 }

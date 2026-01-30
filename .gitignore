@@ -59,6 +59,7 @@ Thumbs.db
 # ========================
 .env
 .env.*
+config.json
 
 # ========================
 # Swagger generated files
