@@ -1,12 +1,14 @@
 package config
 
 import (
+	"kasir-api/internal/infra/gormzap"
 	"time"
 
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	glogger "gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
 )
 
@@ -20,6 +22,7 @@ func NewDatabase(v *viper.Viper, log *zap.Logger) *gorm.DB {
 		NamingStrategy: schema.NamingStrategy{
 			SingularTable: true,
 		},
+		Logger: gormzap.New(log, glogger.Info, 700*time.Millisecond),
 	})
 	if err != nil {
 		log.Fatal("Failed connect to NeonDB:", zap.Error(err))

@@ -26,7 +26,7 @@ func main() {
 	db := config.NewDatabase(v, logger)
 
 	// Init Fiber
-	app := config.NewFiber(v)
+	app := config.NewFiber(v, logger)
 
 	// Register routes / wiring
 	config.Bootstrap(&config.BootstrapConfig{

@@ -2,4 +2,7 @@ package repository
 
 import "errors"
 
-var ErrCategoryNotFound = errors.New("Category not found")
+var (
+	ErrNotFound = errors.New("not found")
+	ErrConflict = errors.New("conflict")
+)

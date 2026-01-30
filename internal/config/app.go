@@ -20,9 +20,9 @@ type BootstrapConfig struct {
 }
 
 func Bootstrap(cfg *BootstrapConfig) {
-	categoryRepository := postgres.NewCategoryRepository(cfg.DB, cfg.Logger)
-	categoryService := service.NewCategoryService(categoryRepository, cfg.Logger)
-	categoryController := http.NewCategoryController(categoryService, cfg.Logger)
+	categoryRepository := postgres.NewCategoryRepository(cfg.DB)
+	categoryService := service.NewCategoryService(categoryRepository)
+	categoryController := http.NewCategoryController(categoryService)
 
 	routeConfig := routes.RouteConfig{
 		App:                cfg.App,

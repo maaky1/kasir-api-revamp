@@ -14,7 +14,7 @@ type APIResponse struct {
 func Success(c *fiber.Ctx, code int, message string, data any) error {
 	return c.Status(code).JSON(APIResponse{
 		Code:    code,
-		Status:  "success",
+		Status:  "Success",
 		Message: message,
 		Data:    data,
 	})
@@ -23,7 +23,7 @@ func Success(c *fiber.Ctx, code int, message string, data any) error {
 func Error(c *fiber.Ctx, code int, message string) error {
 	return c.Status(code).JSON(APIResponse{
 		Code:    code,
-		Status:  "error",
+		Status:  "Error",
 		Message: message,
 	})
 }

@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"errors"
+	"kasir-api/internal/delivery/http/middleware"
 	"kasir-api/internal/entity"
 	"kasir-api/internal/repository"
 
@@ -11,16 +12,15 @@ import (
 )
 
 type categoryRepo struct {
-	db  *gorm.DB
-	log *zap.Logger
+	db *gorm.DB
 }
 
-func NewCategoryRepository(db *gorm.DB, log *zap.Logger) *categoryRepo {
-	return &categoryRepo{db: db, log: log}
+func NewCategoryRepository(db *gorm.DB) *categoryRepo {
+	return &categoryRepo{db: db}
 }
 
 func (r *categoryRepo) FindByID(ctx context.Context, id uint) (entity.Category, error) {
-	log := r.log.With(
+	log := middleware.LoggerFromCtx(ctx).With(
 		zap.String("layer", "repository"),
 		zap.String("operation", "CategoryRepository.FindByID"),
 		zap.Uint("category_id", id),
@@ -29,11 +29,11 @@ func (r *categoryRepo) FindByID(ctx context.Context, id uint) (entity.Category, 
 	log.Debug("Querying category")
 
 	var c entity.Category
-	err := r.db.WithContext(ctx).First(&c, id).Error
+	err := r.db.WithContext(ctx).Take(&c, id).Error
 
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		log.Warn(repository.ErrCategoryNotFound.Error())
-		return entity.Category{}, repository.ErrCategoryNotFound
+		log.Warn("not found")
+		return entity.Category{}, repository.ErrNotFound
 	}
 
 	if err != nil {
