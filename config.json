@@ -11,7 +11,7 @@
     "level": 5
   },
   "database": {
-    "url": "postgresql://neondb_owner:npg_8mDHUf2XykBQ@ep-dark-sound-a1jcge8o-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require&timezone=Asia/Jakarta",
+    "url": "postgresql://neondb_owner:npg_zq4ifEmTG6Ke@ep-dark-sound-a1jcge8o-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require&timezone=Asia/Jakarta",
     "pool": {
       "idle": 5,
       "max": 10,
