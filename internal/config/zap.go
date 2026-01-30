@@ -33,7 +33,6 @@ func NewLogger(v *viper.Viper) *zap.Logger {
 		TimeKey:      "time",
 		LevelKey:     "level",
 		MessageKey:   "msg",
-		CallerKey:    "caller",
 		EncodeTime:   zapcore.ISO8601TimeEncoder,
 		EncodeCaller: zapcore.ShortCallerEncoder,
 	}
@@ -48,7 +47,7 @@ func NewLogger(v *viper.Viper) *zap.Logger {
 			level,
 		)
 
-		return zap.New(core, zap.AddCaller(), zap.AddCallerSkip(1))
+		return zap.New(core)
 	}
 
 	encCfg.EncodeLevel = zapcore.LowercaseLevelEncoder
@@ -58,7 +57,7 @@ func NewLogger(v *viper.Viper) *zap.Logger {
 		level,
 	)
 
-	return zap.New(core, zap.AddCaller(), zap.AddCallerSkip(1))
+	return zap.New(core)
 }
 
 // ===== helper padding caller (dev only) =====

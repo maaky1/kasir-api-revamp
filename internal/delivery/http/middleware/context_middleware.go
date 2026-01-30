@@ -9,26 +9,23 @@ import (
 
 // dipakai di CONTROLLER
 func LoggerFromFiber(c *fiber.Ctx) *zap.Logger {
-	if ctx, ok := c.Locals(string(LoggerKey)).(context.Context); ok {
-		if log, ok := ctx.Value(LoggerKey).(*zap.Logger); ok {
-			return log
-		}
-	}
-	return zap.L()
+	return LoggerFromCtx(c.UserContext())
 }
 
 // dipakai buat pass ke SERVICE / REPO
 func RequestContext(c *fiber.Ctx) context.Context {
-	if ctx, ok := c.Locals(string(LoggerKey)).(context.Context); ok {
-		return ctx
-	}
-	return context.Background()
+	return c.UserContext()
 }
 
 // dipakai di SERVICE / REPO
 func LoggerFromCtx(ctx context.Context) *zap.Logger {
-	if log, ok := ctx.Value(LoggerKey).(*zap.Logger); ok {
-		return log
+	if ctx == nil {
+		return zap.NewNop()
 	}
-	return zap.L()
+	if v := ctx.Value(LoggerKey); v != nil {
+		if log, ok := v.(*zap.Logger); ok && log != nil {
+			return log
+		}
+	}
+	return zap.NewNop()
 }

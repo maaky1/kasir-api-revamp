@@ -27,14 +27,14 @@ func LoggingMiddleware(baseLogger *zap.Logger) fiber.Handler {
 		requestID := uuid.NewString()
 
 		logger := baseLogger.With(
-			zap.String("layer", "http"),
+			zap.String("transport", "http"),
 			zap.String("request_id", requestID),
 			zap.String("method", c.Method()),
 			zap.String("path", c.Path()),
 		)
 
-		ctx := context.WithValue(context.Background(), LoggerKey, logger)
-		c.Locals(string(LoggerKey), ctx)
+		ctx := context.WithValue(c.UserContext(), LoggerKey, logger)
+		c.SetUserContext(ctx)
 
 		logger.Info("request_started")
 
@@ -42,25 +42,22 @@ func LoggingMiddleware(baseLogger *zap.Logger) fiber.Handler {
 		status := c.Response().StatusCode()
 		duration := time.Since(start).Truncate(time.Millisecond)
 
+		fields := []zap.Field{
+			zap.Int("status", status),
+			zap.String("duration", duration.String()),
+		}
+
+		if err != nil {
+			fields = append(fields, zap.Error(err))
+		}
+
 		switch {
 		case status >= 500:
-			logger.Error("request_error",
-				zap.Int("status", status),
-				zap.String("duration", duration.String()),
-				zap.Error(err),
-			)
-
+			logger.Error("request_error", fields...)
 		case status >= 400:
-			logger.Warn("request_completed",
-				zap.Int("status", status),
-				zap.String("duration", duration.String()),
-			)
-
+			logger.Warn("request_completed", fields...)
 		default:
-			logger.Info("request_completed",
-				zap.Int("status", status),
-				zap.String("duration", duration.String()),
-			)
+			logger.Info("request_completed", fields...)
 		}
 
 		return err

@@ -18,9 +18,11 @@ func (c *RouteConfig) Setup() {
 func (c *RouteConfig) SetupRegister() {
 	api := c.App.Group("/api")
 
-	categories := api.Group("/category")
-
-	categories.Get("/:id", c.CategoryController.GetCategoryByID)
+	category := api.Group("/category")
+	category.Post("", c.CategoryController.CreateCategory)
+	category.Get("/:id", c.CategoryController.GetCategoryByID)
+	category.Get("", c.CategoryController.GetAllCategory)
+	category.Put("/:id", c.CategoryController.UpdateCategoryByID)
 
 	api.Get("/health", func(ctx *fiber.Ctx) error {
 		return ctx.JSON(fiber.Map{"status": "Ok"})

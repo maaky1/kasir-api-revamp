@@ -9,7 +9,6 @@ import (
 func NewViper() *viper.Viper {
 	v := viper.New()
 
-	// ENV support (Railway)
 	v.AutomaticEnv()
 	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 
