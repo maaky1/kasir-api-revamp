@@ -24,9 +24,14 @@ func Bootstrap(cfg *BootstrapConfig) {
 	categoryService := service.NewCategoryService(categoryRepository)
 	categoryController := http.NewCategoryController(categoryService)
 
+	productRepository := postgres.NewProductRepository(cfg.DB)
+	productService := service.NewProductService(productRepository, categoryRepository)
+	productController := http.NewProductController(productService)
+
 	routeConfig := routes.RouteConfig{
 		App:                cfg.App,
 		CategoryController: categoryController,
+		ProductController:  productController,
 	}
 
 	routeConfig.Setup()

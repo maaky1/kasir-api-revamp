@@ -20,11 +20,11 @@ type CategoryService interface {
 }
 
 type categoryService struct {
-	repo repository.CategoryRepository
+	categoryRepo repository.CategoryRepository
 }
 
-func NewCategoryService(repo repository.CategoryRepository) CategoryService {
-	return &categoryService{repo: repo}
+func NewCategoryService(categoryRepo repository.CategoryRepository) CategoryService {
+	return &categoryService{categoryRepo: categoryRepo}
 }
 
 func (s *categoryService) CreateCategory(ctx context.Context, req dto.Category) (dto.CategoryResponse, error) {
@@ -50,7 +50,7 @@ func (s *categoryService) CreateCategory(ctx context.Context, req dto.Category) 
 		Description: req.Description,
 	}
 
-	created, err := s.repo.Create(ctx, entity)
+	created, err := s.categoryRepo.Create(ctx, entity)
 	if err != nil {
 		if errors.Is(err, repository.ErrConflict) {
 			log.Warn("out", zap.String("result", "conflict"))
@@ -83,7 +83,7 @@ func (s *categoryService) GetCategoryByID(ctx context.Context, id uint) (dto.Cat
 
 	log.Info("in")
 
-	c, err := s.repo.FindByID(ctx, id)
+	c, err := s.categoryRepo.FindByID(ctx, id)
 	if err != nil {
 		if errors.Is(err, repository.ErrNotFound) {
 			log.Warn("out", zap.String("result", "not_found"))
@@ -114,7 +114,7 @@ func (s *categoryService) GetAllCategory(ctx context.Context) ([]dto.CategoryRes
 
 	log.Info("in")
 
-	categories, err := s.repo.FindAll(ctx)
+	categories, err := s.categoryRepo.FindAll(ctx)
 	if err != nil {
 		log.Error("out", zap.Error(err))
 		return nil, err
@@ -154,7 +154,7 @@ func (s *categoryService) UpdateCategoryByID(ctx context.Context, id uint, req d
 		Description: req.Description,
 	}
 
-	updated, err := s.repo.Update(ctx, cat)
+	updated, err := s.categoryRepo.Update(ctx, cat)
 	if err != nil {
 		if errors.Is(err, repository.ErrNotFound) {
 			log.Warn("out", zap.String("result", "not_found"))
@@ -195,7 +195,7 @@ func (s *categoryService) DeleteCategoryByID(ctx context.Context, id uint) error
 		return InvalidInput("Invalid category ID")
 	}
 
-	err := s.repo.Delete(ctx, id)
+	err := s.categoryRepo.Delete(ctx, id)
 	if err != nil {
 		if errors.Is(err, repository.ErrNotFound) {
 			log.Warn("out", zap.String("result", "not_found"))
