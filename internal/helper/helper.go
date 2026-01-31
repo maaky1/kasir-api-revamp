@@ -31,6 +31,8 @@ func WriteServiceError(ctx *fiber.Ctx, err error) error {
 		return response.Error(ctx, http.StatusNotFound, appErr.Message)
 	case "CONFLICT":
 		return response.Error(ctx, http.StatusConflict, appErr.Message)
+	case "FORBIDDEN":
+		return response.Error(ctx, http.StatusForbidden, appErr.Message)
 	default:
 		return response.Error(ctx, http.StatusInternalServerError, appErr.Message)
 	}

@@ -156,3 +156,36 @@ func (r *categoryRepo) Update(ctx context.Context, c entity.Category) (entity.Ca
 
 	return current, nil
 }
+
+func (r *categoryRepo) Delete(ctx context.Context, id uint) error {
+	log := middleware.LoggerFromCtx(ctx).With(
+		zap.String("layer", "repository"),
+		zap.String("operation", "CategoryRepository.Delete"),
+		zap.Uint("category_id", id),
+	)
+
+	log.Info("in")
+
+	if id == 1 {
+		log.Info("out", zap.String("result", "forbidden_default_category"))
+		return repository.ErrForbidden
+	}
+
+	var current entity.Category
+	if err := r.db.WithContext(ctx).First(&current, id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			log.Info("out", zap.String("result", "not_found"))
+			return repository.ErrNotFound
+		}
+		log.Error("out", zap.String("result", "db_error"), zap.Error(err))
+		return err
+	}
+
+	if err := r.db.WithContext(ctx).Delete(&entity.Category{}, id).Error; err != nil {
+		log.Error("out", zap.String("result", "delete_failed"), zap.Error(err))
+		return err
+	}
+
+	log.Info("out", zap.String("result", "ok"))
+	return nil
+}

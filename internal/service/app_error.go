@@ -21,6 +21,10 @@ func Conflict(msg string) error {
 	return &AppError{Code: "CONFLICT", Message: msg}
 }
 
+func Forbidden(msg string) error {
+	return &AppError{Code: "FORBIDDEN", Message: msg}
+}
+
 func Internal(msg string) error {
 	return &AppError{Code: "INTERNAL", Message: msg}
 }

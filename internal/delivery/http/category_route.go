@@ -43,6 +43,7 @@ func (h *CategoryController) CreateCategory(ctx *fiber.Ctx) error {
 	}
 
 	log.Info("out")
+
 	return response.Success(ctx, http.StatusCreated, "Category created", res)
 }
 
@@ -69,6 +70,7 @@ func (h *CategoryController) GetCategoryByID(ctx *fiber.Ctx) error {
 	}
 
 	log.Info("out")
+
 	return response.Success(ctx, http.StatusOK, "Category found", res)
 }
 
@@ -89,6 +91,7 @@ func (h *CategoryController) GetAllCategory(ctx *fiber.Ctx) error {
 	}
 
 	log.Info("out", zap.Int("count", len(res)))
+
 	return response.Success(ctx, http.StatusOK, "Categories list", res)
 }
 
@@ -121,5 +124,32 @@ func (h *CategoryController) UpdateCategoryByID(ctx *fiber.Ctx) error {
 	}
 
 	log.Info("out")
+
 	return response.Success(ctx, http.StatusOK, "Category updated", res)
+}
+
+func (h *CategoryController) DeleteCategoryByID(ctx *fiber.Ctx) error {
+	log := middleware.LoggerFromFiber(ctx).With(
+		zap.String("layer", "controller"),
+		zap.String("operation", "CategoryController.DeleteCategoryByID"),
+	)
+
+	log.Info("in")
+
+	id, err := helper.ParseUintParam(ctx, "id")
+	if err != nil {
+		log.Warn("out", zap.String("result", "invalid_category_id"))
+		return response.Error(ctx, http.StatusBadRequest, "Invalid category ID")
+	}
+
+	reqCtx := middleware.RequestContext(ctx)
+
+	if err := h.svc.DeleteCategoryByID(reqCtx, id); err != nil {
+		log.Error("out", zap.Error(err))
+		return helper.WriteServiceError(ctx, err)
+	}
+
+	log.Info("out")
+
+	return response.Success(ctx, http.StatusOK, "Category deleted", nil)
 }

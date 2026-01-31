@@ -10,4 +10,5 @@ type CategoryRepository interface {
 	FindByID(ctx context.Context, id uint) (entity.Category, error)
 	FindAll(ctx context.Context) ([]entity.Category, error)
 	Update(ctx context.Context, c entity.Category) (entity.Category, error)
+	Delete(ctx context.Context, id uint) error
 }

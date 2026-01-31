@@ -16,6 +16,7 @@ type CategoryService interface {
 	GetCategoryByID(ctx context.Context, id uint) (dto.CategoryResponse, error)
 	GetAllCategory(ctx context.Context) ([]dto.CategoryResponse, error)
 	UpdateCategoryByID(ctx context.Context, id uint, req dto.Category) (dto.CategoryResponse, error)
+	DeleteCategoryByID(ctx context.Context, id uint) error
 }
 
 type categoryService struct {
@@ -137,7 +138,7 @@ func (s *categoryService) GetAllCategory(ctx context.Context) ([]dto.CategoryRes
 func (s *categoryService) UpdateCategoryByID(ctx context.Context, id uint, req dto.Category) (dto.CategoryResponse, error) {
 	log := middleware.LoggerFromCtx(ctx).With(
 		zap.String("layer", "service"),
-		zap.String("operation", "CategoryService.UpdateCategory"),
+		zap.String("operation", "CategoryService.UpdateCategoryByID"),
 	)
 
 	log.Info("in")
@@ -179,4 +180,38 @@ func (s *categoryService) UpdateCategoryByID(ctx context.Context, id uint, req d
 	log.Info("out", zap.String("result", "ok"), zap.Uint("category_id", updated.ID))
 
 	return res, nil
+}
+
+func (s *categoryService) DeleteCategoryByID(ctx context.Context, id uint) error {
+	log := middleware.LoggerFromCtx(ctx).With(
+		zap.String("layer", "service"),
+		zap.String("operation", "CategoryService.DeleteCategoryByID"),
+	)
+
+	log.Info("in")
+
+	if id == 0 {
+		log.Warn("out", zap.String("result", "invalid_category_id"))
+		return InvalidInput("Invalid category ID")
+	}
+
+	err := s.repo.Delete(ctx, id)
+	if err != nil {
+		if errors.Is(err, repository.ErrNotFound) {
+			log.Warn("out", zap.String("result", "not_found"))
+			return NotFound("Category not found")
+		}
+
+		if errors.Is(err, repository.ErrForbidden) {
+			log.Warn("out", zap.String("result", "forbidden"))
+			return Forbidden("Default category cannot be deleted")
+		}
+
+		log.Error("out", zap.Error(err))
+		return err
+	}
+
+	log.Info("out", zap.String("result", "ok"))
+
+	return nil
 }

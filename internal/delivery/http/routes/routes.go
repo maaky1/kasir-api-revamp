@@ -23,6 +23,7 @@ func (c *RouteConfig) SetupRegister() {
 	category.Get("/:id", c.CategoryController.GetCategoryByID)
 	category.Get("", c.CategoryController.GetAllCategory)
 	category.Put("/:id", c.CategoryController.UpdateCategoryByID)
+	category.Delete("/:id", c.CategoryController.DeleteCategoryByID)
 
 	api.Get("/health", func(ctx *fiber.Ctx) error {
 		return ctx.JSON(fiber.Map{"status": "Ok"})
