@@ -95,6 +95,7 @@ func (r *categoryRepo) FindAll(ctx context.Context) ([]entity.Category, error) {
 	}
 
 	log.Info("out", zap.Int("count", len(categories)))
+
 	return categories, nil
 }
 

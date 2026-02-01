@@ -28,6 +28,11 @@ func (c *RouteConfig) SetupRegister() {
 
 	product := api.Group("/product")
 	product.Post("", c.ProductController.CreateProduct)
+	product.Get("/:id", c.ProductController.GetProductByID)
+	product.Get("", c.ProductController.GetAllProduct)
+	product.Put("/:id", c.ProductController.UpdateProductByID)
+	product.Delete("/:id", c.ProductController.DeleteProductByID)
+	product.Get("/:id/detail", c.ProductController.GetProductDetailByID)
 
 	api.Get("/health", func(ctx *fiber.Ctx) error {
 		return ctx.JSON(fiber.Map{"status": "Ok"})
