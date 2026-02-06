@@ -28,10 +28,16 @@ func Bootstrap(cfg *BootstrapConfig) {
 	productService := service.NewProductService(productRepository, categoryRepository)
 	productController := http.NewProductController(productService)
 
+	trxRepository := postgres.NewTrxRepository(cfg.DB)
+	trxDetRepository := postgres.NewTrxDetailRepository(cfg.DB)
+	trxService := service.NewTrxService(trxRepository, trxDetRepository)
+	trxController := http.NewTrxController(trxService)
+
 	routeConfig := routes.RouteConfig{
 		App:                cfg.App,
 		CategoryController: categoryController,
 		ProductController:  productController,
+		TrxController:      trxController,
 	}
 
 	routeConfig.Setup()

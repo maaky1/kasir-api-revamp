@@ -10,6 +10,7 @@ type RouteConfig struct {
 	App                *fiber.App
 	CategoryController *http.CategoryController
 	ProductController  *http.ProductController
+	TrxController      *http.TrxController
 }
 
 func (c *RouteConfig) Setup() {
@@ -33,6 +34,9 @@ func (c *RouteConfig) SetupRegister() {
 	product.Put("/:id", c.ProductController.UpdateProductByID)
 	product.Delete("/:id", c.ProductController.DeleteProductByID)
 	product.Get("/:id/detail", c.ProductController.GetProductDetailByID)
+
+	trx := api.Group("/transaction")
+	trx.Post("/checkout", c.TrxController.Checkout)
 
 	api.Get("/health", func(ctx *fiber.Ctx) error {
 		return ctx.JSON(fiber.Map{"status": "Ok"})
