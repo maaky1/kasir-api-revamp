@@ -6,5 +6,5 @@ type Checkout struct {
 
 type CheckoutItem struct {
 	ProductID uint `json:"product_id"`
-	Quantity  uint `json:"quantity"`
+	Quantity  int  `json:"quantity"`
 }

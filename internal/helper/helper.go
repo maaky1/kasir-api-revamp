@@ -25,6 +25,8 @@ func WriteServiceError(ctx *fiber.Ctx, err error) error {
 	}
 
 	switch appErr.Code {
+	case "BAD_REQUEST":
+		return response.Error(ctx, http.StatusBadRequest, appErr.Message)
 	case "INVALID_INPUT":
 		return response.Error(ctx, http.StatusBadRequest, appErr.Message)
 	case "NOT_FOUND":

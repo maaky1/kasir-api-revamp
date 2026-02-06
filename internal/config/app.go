@@ -30,7 +30,7 @@ func Bootstrap(cfg *BootstrapConfig) {
 
 	trxRepository := postgres.NewTrxRepository(cfg.DB)
 	trxDetRepository := postgres.NewTrxDetailRepository(cfg.DB)
-	trxService := service.NewTrxService(trxRepository, trxDetRepository)
+	trxService := service.NewTrxService(productRepository, trxRepository, trxDetRepository)
 	trxController := http.NewTrxController(trxService)
 
 	routeConfig := routes.RouteConfig{

@@ -9,6 +9,10 @@ func (e *AppError) Error() string {
 	return e.Message
 }
 
+func BadRequest(msg string) error {
+	return &AppError{Code: "BAD_REQUEST", Message: msg}
+}
+
 func NotFound(msg string) error {
 	return &AppError{Code: "NOT_FOUND", Message: msg}
 }
