@@ -56,14 +56,22 @@ func (s *trxService) Checkout(ctx context.Context, req dto.Checkout) (dto.Transa
 		}
 
 		if curProduct.Stock < item.Quantity {
+			log.Warn("out", zap.String("result", "bad_request"))
 			return dto.Transaction{}, BadRequest("Stock not enough")
 		}
 
 		// Update product stock
-		s.productRepo.Update(ctx, entity.Product{
+		if _, err := s.productRepo.Update(ctx, entity.Product{
 			ID:    curProduct.ID,
 			Stock: curProduct.Stock - item.Quantity,
-		})
+		}); err != nil {
+			if errors.Is(err, repository.ErrNotFound) {
+				log.Warn("out", zap.String("result", "not_found"))
+				return dto.Transaction{}, NotFound("Product not found")
+			}
+			log.Error("out", zap.Error(err))
+			return dto.Transaction{}, err
+		}
 
 		// Calculate
 		subtotal := curProduct.Price * item.Quantity
@@ -80,7 +88,34 @@ func (s *trxService) Checkout(ctx context.Context, req dto.Checkout) (dto.Transa
 		details = append(details, detail)
 	}
 
-	var res dto.Transaction
+	// Insert transaction
+	trxRes, err := s.trxRepo.Create(ctx, entity.Transaction{TotalAmount: total})
+	if err != nil {
+		log.Warn("out", zap.String("result", "repository_error"))
+		return dto.Transaction{}, err
+	}
 
-	return res, nil
+	// Insert transaction detail
+	for i := range details {
+		trxDetRes, err := s.trxDetRepo.Create(ctx, entity.TransactionDetail{
+			TransactionID: trxRes.ID,
+			ProductID:     details[i].ProductID,
+			Quantity:      details[i].Quantity,
+			Subtotal:      details[i].Subtotal,
+		})
+		if err != nil {
+			log.Warn("out", zap.String("result", "repository_error"))
+			return dto.Transaction{}, err
+		}
+
+		details[i].ID = trxDetRes.ID
+		details[i].TransactionID = trxDetRes.TransactionID
+	}
+
+	return dto.Transaction{
+		ID:        trxRes.ID,
+		Total:     trxRes.TotalAmount,
+		CreatedAt: trxRes.CreatedAt,
+		Details:   details,
+	}, nil
 }
