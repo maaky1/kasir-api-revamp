@@ -112,6 +112,8 @@ func (s *trxService) Checkout(ctx context.Context, req dto.Checkout) (dto.Transa
 		details[i].TransactionID = trxDetRes.TransactionID
 	}
 
+	log.Info("out", zap.String("result", "ok"))
+
 	return dto.Transaction{
 		ID:        trxRes.ID,
 		Total:     trxRes.TotalAmount,

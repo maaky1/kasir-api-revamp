@@ -11,6 +11,7 @@ type RouteConfig struct {
 	CategoryController *http.CategoryController
 	ProductController  *http.ProductController
 	TrxController      *http.TrxController
+	ReportController   *http.ReportController
 }
 
 func (c *RouteConfig) Setup() {
@@ -37,6 +38,9 @@ func (c *RouteConfig) SetupRegister() {
 
 	trx := api.Group("/transaction")
 	trx.Post("/checkout", c.TrxController.Checkout)
+
+	report := api.Group("/report")
+	report.Get("", c.ReportController.GetReport)
 
 	api.Get("/health", func(ctx *fiber.Ctx) error {
 		return ctx.JSON(fiber.Map{"status": "Ok"})

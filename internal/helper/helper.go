@@ -5,6 +5,7 @@ import (
 	"kasir-api/internal/service"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -15,7 +16,21 @@ func ParseUintParam(c *fiber.Ctx, key string) (uint, error) {
 	if err != nil || n <= 0 {
 		return 0, fiber.ErrBadRequest
 	}
+
 	return uint(n), nil
+}
+
+func ParseDateQuery(c *fiber.Ctx, key string) (string, error) {
+	raw := c.Query(key)
+	if raw == "" {
+		return "", nil
+	}
+
+	if _, err := time.Parse("2006-01-02", raw); err != nil {
+		return "", fiber.ErrBadRequest
+	}
+
+	return raw, nil
 }
 
 func WriteServiceError(ctx *fiber.Ctx, err error) error {

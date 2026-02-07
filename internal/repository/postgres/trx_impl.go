@@ -9,15 +9,15 @@ import (
 	"gorm.io/gorm"
 )
 
-type trxRepository struct {
+type trxRepo struct {
 	db *gorm.DB
 }
 
-func NewTrxRepository(db *gorm.DB) *trxRepository {
-	return &trxRepository{db: db}
+func NewTrxRepository(db *gorm.DB) *trxRepo {
+	return &trxRepo{db: db}
 }
 
-func (r *trxRepository) Create(ctx context.Context, trx entity.Transaction) (entity.Transaction, error) {
+func (r *trxRepo) Create(ctx context.Context, trx entity.Transaction) (entity.Transaction, error) {
 	log := middleware.LoggerFromCtx(ctx).With(
 		zap.String("layer", "repository"),
 		zap.String("operation", "TrxRepository.Create"),

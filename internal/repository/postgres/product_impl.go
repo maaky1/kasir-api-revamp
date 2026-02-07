@@ -191,7 +191,6 @@ func (r *productRepo) FindDetailByID(ctx context.Context, id uint) (dto.ProductD
 	log.Info("in")
 
 	var out dto.ProductDetailResponse
-
 	err := r.db.WithContext(ctx).
 		Table("product p").
 		Select(`
